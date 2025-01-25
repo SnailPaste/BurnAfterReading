@@ -1,0 +1,161 @@
+{% extends "layout.html.twig" %}
+
+{% block body %}
+    <div class="mb-3">
+        <label for="plaintext" class="form-label">Message to encrypt</label>
+        <textarea id="plaintext" class="form-control bg-secondary-subtle" rows="10" placeholder="Type or paste your message here"></textarea>
+    </div>
+    <div class="mb-3">
+        <label for="lifetime" class="form-label">How long before an unopened message is deleted?</label>
+        <select id="lifetime" class="form-select bg-secondary-subtle">
+            {% for key,lifetime in lifetimes %}<option value="{{ key }}"{% if lifetime == default_lifetime %} selected{% endif %}>{{ lifetime }}</option>{% endfor %}
+        </select>
+    </div>
+    <div class="mb-3">
+        <button id="encrypt" class="btn btn-primary">Encrypt and share</button>
+    </div>
+    <div class="mb-3 alert alert-danger d-none" id="error" aria-hidden="true"></div>
+
+    <dialog id="dialog-created" class="p-0 border-2 rounded-top-3">
+        <button type="button" class="btn-close float-end p-2" aria-label="Close"></button>
+        <h2 class="border-bottom-2 text-center">Success</h2>
+        <div class="px-3 mb-3">The encrypted message has been saved. Share the link below with the intended recipient.</div>
+        <div class="px-3 mb-3 input-group">
+            <textarea type="text" class="form-control user-select-all" id="link-value" aria-label="Recipient's username" rows="3" readonly></textarea>
+            <button class="btn btn-outline-secondary" type="button" id="link-copy">Copy</button>
+        </div>
+    </dialog>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        // https://developers.google.com/web/updates/2012/06/How-to-convert-ArrayBuffer-to-and-from-String
+        const pack = (buffer) => {
+            return window.btoa(
+                String.fromCharCode.apply(null, new Uint8Array(buffer))
+            )
+        }
+
+        // https://developer.mozilla.org/en-US/docs/Web/API/TextEncoder
+        const encode = (data) => {
+            const encoder = new TextEncoder()
+            return encoder.encode(data)
+        }
+
+        const set_error = (message = '') => {
+            const e = document.getElementById('error');
+            e.innerText = message;
+            e.classList.toggle('d-none', !message)
+            e.ariaHidden = message ? 'false':'true';
+        }
+
+        const show_link = (url, key) => {
+            const full_url = document.location.protocol + "//" + document.location.host + url + "#" + (
+                new URLSearchParams({
+                    key: pack(key)
+                })
+            ).toString();
+
+            const link_value = document.getElementById('link-value');
+            link_value.value = full_url;
+            document.getElementById('dialog-created').showModal();
+            link_value.setSelectionRange(0, link_value.value.length);
+            link_value.focus();
+        }
+
+        // Length limits for the data we're sending
+        const max_iv_length = {{ limits.iv }};
+        const max_ciphertext_length = {{ limits.ciphertext }};
+
+        document.getElementById('encrypt').addEventListener('click', async function() {
+            // Hide the error
+            set_error();
+
+            // If the message is empty, bail out here
+            const pt = document.getElementById('plaintext');
+            if (pt.value.length === 0) {
+                set_error('A message is required');
+                return;
+            }
+
+            // Start storing data for the submission
+            const data = new FormData();
+            data.set('lifetime', document.getElementById('lifetime').value);
+
+            // Generate a key that we'll use to encrypt (and later decrypt) the message
+            window.crypto.subtle.generateKey(
+                {
+                    name: "AES-GCM",
+                    length: 256,
+                },
+                true,
+                ["encrypt", "decrypt"]
+            ).then((key) => {
+                // Encode the plain text value into an ArrayBuffer
+                const encoded = encode(document.getElementById('plaintext').value);
+
+                // Generate a random iv and add it to the data we send to the server
+                const iv = window.crypto.getRandomValues(new Uint8Array(12));
+                data.set('iv', pack(iv));
+
+                // Now we'll encrypt the message and export the key
+                return Promise.all([
+                    window.crypto.subtle.encrypt(
+                        {
+                            name: 'AES-GCM',
+                            iv: iv
+                        },
+                        key,
+                        encoded
+                    ),
+                    window.crypto.subtle.exportKey('raw', key)
+                ]);
+            }).then(results => {
+                // Add the encrypted message to the data we send to the server
+                data.set('ciphertext', pack(results[0]));
+
+                if (data.get('iv').length > max_iv_length) {
+                    set_error('There was an error initializing the encryption');
+                    return;
+                }
+
+                // Verify that the ciphertext does not exceed the maximum size
+                if (data.get('ciphertext').length > max_ciphertext_length) {
+                    set_error('The encrypted message exceeds the maximum size');
+                    return;
+                }
+
+                // Send the lifetime, iv, and ciphertext to the server to be stored
+                fetch('{{ url_for('store') }}', {
+                    method: 'POST',
+                    headers:{
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: new URLSearchParams(data)
+                }).then(response =>
+                    response.json()
+                ).catch(error => {
+                    set_error('There was an error saving the message.')}
+                ).then(data => {
+                    if (data.url) {
+                        show_link(data.url, results[1]);
+                    } else {
+                        set_error(data.error || 'An unknown error has occurred');
+                    }
+                })
+            });
+        });
+
+        document.getElementById('link-copy').addEventListener('click', (ev) => {
+            const url = document.getElementById('link-value').value;
+            navigator.clipboard.writeText(url)
+                .then(() => {
+                    ev.target.innerText = 'Copied!';
+                });
+        });
+
+        document.querySelectorAll('dialog .btn-close').forEach((el) => el.addEventListener('click', (ev) => {
+            ev.target.closest('dialog').close();
+        }));
+    </script>
+{% endblock %}

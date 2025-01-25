@@ -1,0 +1,29 @@
+body {
+    margin-bottom: 120px;
+}
+
+body, .fixed-bottom {
+    padding-left: calc(100vw - 100%);
+}
+
+#header {
+    background: rgb(197, 71, 2);
+    background: linear-gradient(115deg, rgb(214, 0, 0) 0%, rgb(255, 32, 32) 16%, rgb(250, 69, 69) 32%);
+    background-clip: border-box;
+    border-style: solid;
+    border-color: rgb(135, 31, 0);
+    border-radius: 0 0 16px 16px;
+    border-width: 0 4px 4px;
+}
+
+dialog textarea {
+    resize: none;
+}
+
+dialog::backdrop {
+    background-color: rgba(0, 0, 0, 0.75);
+}
+
+#link-copy {
+    width: 90px;
+}

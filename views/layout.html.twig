@@ -1,0 +1,24 @@
+<!doctype html>
+<html data-bs-theme="dark" lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="darkreader-lock">
+    <title>Burn After Reading</title>
+    <link href="{{ base_path() }}/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ base_path() }}/css/style.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <div id="header" class="row pt-2 mb-4">
+        <div class="col-4 text-center text-lg-start">
+            <img class="float-lg-start me-3" src="/img/logo.png" alt=""><h1 class="mb-3 clearfix pt-1 pt-lg-5" style="word-spacing: 9999rem">Burn After Reading</h1>
+        </div>
+        <div class="col-8 pt-5 fs-4 text-black">Securely share a one-time message over the Internet. Your computer encrypts the message before sending it to the server. When the encrypted message is retrieved or the expiration time is exceeded, the encrypted message is deleted from the server.</div>
+    </div>
+    {% block body %}{% endblock %}
+</div>
+<div class="fixed-bottom text-center bg-secondary-subtle border-top"><a href="https://github.com/SnailPaste/BurnAfterReading" rel="noopener" target="_blank">Burn After Reading</a> (&copy; 2025 Snail Paste, LLC) is software licensed under the <a href="https://github.com/SnailPaste/BurnAfterReading/blob/master/LICENSE.md" rel="noopener">GNU AGPL 3.0</a></div>
+{% block scripts %}{% endblock %}
+</body>
+</html>

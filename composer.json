@@ -1,0 +1,44 @@
+{
+  "name": "snailpaste/burnafterreading",
+  "description": "A secure, self-destructing message platform",
+  "type": "project",
+  "version": "v0.0.1",
+  "license": "AGPL-3.0-or-later",
+  "authors": [
+    {
+      "name": "Scott Wichser",
+      "homepage": "https://www.snailpaste.com",
+      "role": "Developer"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "App\\": "src/"
+    }
+  },
+  "require": {
+    "php": ">8.2",
+    "ext-pdo": "*",
+    "ext-pdo_mysql": "*",
+    "ext-json": "*",
+    "slim/slim": "^4.14",
+    "nyholm/psr7": "^1.8",
+    "nyholm/psr7-server": "^1.1",
+    "slim/twig-view": "^3.4",
+    "php-di/slim-bridge": "^3.4",
+    "league/config": "^1.2",
+    "twbs/bootstrap": "^5.3"
+  },
+  "scripts": {
+    "post-update-cmd": [
+      "php -r \"@mkdir('public/css');\"",
+      "php -r \"copy('vendor/twbs/bootstrap/dist/css/bootstrap.min.css', 'public/css/bootstrap.min.css');\"",
+      "php -r \"copy('vendor/twbs/bootstrap/dist/css/bootstrap.min.css.map', 'public/css/bootstrap.min.css.map');\""
+    ],
+    "post-install-cmd": [
+      "php -r \"@mkdir('public/css');\"",
+      "php -r \"copy('vendor/twbs/bootstrap/dist/css/bootstrap.min.css', 'public/css/bootstrap.min.css');\"",
+      "php -r \"copy('vendor/twbs/bootstrap/dist/css/bootstrap.min.css.map', 'public/css/bootstrap.min.css.map');\""
+    ]
+  }
+}
