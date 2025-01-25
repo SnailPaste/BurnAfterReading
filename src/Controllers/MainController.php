@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use App\Extra\Utils;
+use Exception;
 use League\Config\Configuration;
 use PDO;
 use PDOException;
@@ -121,15 +122,15 @@ class MainController
       $get->execute();
       $message = $get->fetch();
       if (!$message) {
-        throw new \Exception();
+        throw new Exception();
       }
-    } catch (\Exception) {
+    } catch (Exception) {
       throw new HttpNotFoundException($request, 'Message does not exist or has been viewed or expired.');
     }
     return $twig->render($response, 'view.html.twig', ['link' => $link]);
   }
 
-  public function retrieve(Request $request, Response $response, Configuration $config, PDO $pdo, string $link): Response
+  public function retrieve(Request $request, Response $response, PDO $pdo, string $link): Response
   {
     // Try fetching the message associated with the link value, if it hasn't expired
     try {
@@ -139,9 +140,9 @@ class MainController
       $get->execute();
       $message = $get->fetch();
       if (!$message) {
-        throw new \Exception();
+        throw new Exception();
       }
-    } catch (\Exception) {
+    } catch (Exception) {
       $response->getBody()->write(json_encode([
         'error' => 'Message not found'
       ]));
