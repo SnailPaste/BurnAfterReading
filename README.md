@@ -89,6 +89,15 @@ Web Server Configuration
 </VirtualHost>
 ```
 
+Cron Job
+--------
+
+The ```cron.php``` file should be run every 5 minutes. This deletes unopened messages that have expired.
+
+```
+*/5 * * * * php /srv/bar/cron.php >/dev/null 2>&1
+```
+
 License
 -------
 Copyright (C) 2025  Snail Paste, LLC
