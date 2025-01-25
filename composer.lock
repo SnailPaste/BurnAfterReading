@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9bc36314a091d06fed056425210e8bc3",
+    "content-hash": "660fa9b4c3f0da1aec00f34e540f8fda",
     "packages": [
         {
             "name": "dflydev/dot-access-data",
@@ -568,16 +568,16 @@
         },
         {
             "name": "php-di/invoker",
-            "version": "2.3.4",
+            "version": "2.3.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHP-DI/Invoker.git",
-                "reference": "33234b32dafa8eb69202f950a1fc92055ed76a86"
+                "reference": "59f15608528d8a8838d69b422a919fd6b16aa576"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHP-DI/Invoker/zipball/33234b32dafa8eb69202f950a1fc92055ed76a86",
-                "reference": "33234b32dafa8eb69202f950a1fc92055ed76a86",
+                "url": "https://api.github.com/repos/PHP-DI/Invoker/zipball/59f15608528d8a8838d69b422a919fd6b16aa576",
+                "reference": "59f15608528d8a8838d69b422a919fd6b16aa576",
                 "shasum": ""
             },
             "require": {
@@ -611,7 +611,7 @@
             ],
             "support": {
                 "issues": "https://github.com/PHP-DI/Invoker/issues",
-                "source": "https://github.com/PHP-DI/Invoker/tree/2.3.4"
+                "source": "https://github.com/PHP-DI/Invoker/tree/2.3.6"
             },
             "funding": [
                 {
@@ -619,7 +619,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-09-08T09:24:21+00:00"
+            "time": "2025-01-17T12:49:27+00:00"
         },
         {
             "name": "php-di/php-di",
@@ -1682,7 +1682,9 @@
     "prefer-lowest": false,
     "platform": {
         "php": ">8.2",
-        "ext-pdo": "*"
+        "ext-pdo": "*",
+        "ext-pdo_mysql": "*",
+        "ext-json": "*"
     },
     "platform-dev": {},
     "plugin-api-version": "2.6.0"
