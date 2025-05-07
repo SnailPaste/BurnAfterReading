@@ -24,7 +24,7 @@ namespace App\Extra;
 
 class Utils
 {
-  public static function isBetween(int $value, int $min, int $max)
+  public static function isBetween(int $value, int $min, int $max): bool
   {
     return $value >= $min && $value <= $max;
   }
