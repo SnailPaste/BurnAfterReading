@@ -38,7 +38,7 @@ $app = Bridge::create($container);
 // Add middleware
 $app->add(TwigMiddleware::createFromContainer($app, Twig::class));
 
-$error_middleware = $app->addErrorMiddleware(false, false, false, null);
+$app->addErrorMiddleware(false, false, false, null);
 
 $app->get('/', [MainController::class, 'create'])->setName('create');
 $app->post('/store', [MainController::class, 'store'])->setName('store');
